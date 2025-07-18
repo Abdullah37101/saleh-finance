@@ -1,0 +1,12 @@
+Flask
+Werkzeug
+itsdangerous
+finnhub-python
+phonenumbers
+requests
+Pillow
+pillow-heif
+pillow-avif
+python-dotenv
+Flask-Mail
+Flask-Session

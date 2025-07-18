@@ -1,0 +1,111 @@
+body
+{
+    min-width: 100%; 
+    width: fit-content;
+}
+
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+/* Colors for brand */
+nav .navbar-brand .blue
+{
+    color: #537fbe;
+}
+nav .navbar-brand .red
+{
+    color: #ea433b;
+}
+nav .navbar-brand .yellow
+{
+    color: #f5b82e;
+}
+nav .navbar-brand .green
+{
+    color: #2e944b;
+}
+
+.website
+{
+    all: unset; 
+    cursor: pointer;
+}
+
+.website:hover 
+{ 
+    text-decoration: underline; 
+}
+
+.info-grid 
+{
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0.5rem 1rem;
+    justify-content: center;
+}
+
+.label 
+{
+    font-weight: bold;
+    text-align: center;
+}
+
+.value 
+{
+    text-align: center;
+}
+
+.nowrap 
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.navbar-nav 
+{
+    white-space: nowrap;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+}
+
+::-webkit-scrollbar 
+{
+    display: none;
+}
+
+#themeSwitch {
+    border: none;
+    padding: 0;
+    border-radius: 50%;
+    background-color: var(--base-varient);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#themeSwitch svg {
+    transition: opacity 0.25s ease;
+    fill: var(--primary-color);
+}
+
+#themeSwitch svg:last-child {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+}
+
+[data-bs-theme="dark"] #themeSwitch svg:first-child {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+}
+
+[data-bs-theme="dark"] #themeSwitch svg:last-child {
+    opacity: 1;
+    pointer-events: auto;
+    position: static;
+}

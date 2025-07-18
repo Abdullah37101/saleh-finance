@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Delete Account
+{% endblock %}
+
+{% block main %}
+<main class="d-flex container text-center justify-content-center align-items-center" style="min-height: calc(100vh - 183.2px);"> 
+    <form action="/delete-account" method="post" onsubmit="confirm('Are you sure you want to delete your account? (This action is irreversible)')">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
+        </div>
+        <button class="btn btn-outline-danger" type="submit">Delete Account</button>
+    </form>
+</main>
+{% endblock %}

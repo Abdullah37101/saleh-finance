@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ stock.symbol }}
+{% endblock %}
+
+{% block main %}
+<main class="container text-center" style="padding-top: 3rem !important; padding: 0; flex: 1;">
+    <img src="{{ stock.logo }}" style="width: 100px; margin-bottom: 3rem;">
+    <div class="info-grid">
+        <div class="label">Name</div>
+        <div class="value">{{ stock.name }}</div>
+      
+        <div class="label">Symbol</div>
+        <div class="value">{{ stock.symbol }}</div>
+      
+        <div class="label">Phone Number</div>
+        <div class="value">{{ stock.phone }}</div>
+      
+        <div class="label">Industry</div>
+        <div class="value">{{ stock.industry }}</div>
+      
+        <div class="label">Website</div>
+        <div class="value">
+          <a href="{{ stock.website_url }}" target="_blank" class="website">{{ stock.website_url }}</a>
+        </div>
+      
+        <div class="label">Market Capitalization</div>
+        <div class="value">{{ stock.market_capitalization | usd }}</div>
+      
+        <div class="label">Shares Outstanding</div>
+        <div class="value">{{ stock.outstanding_shares }}</div>
+      
+        <div class="label">Current Price</div>
+        <div class="value">{{ stock.current_price | usd }}</div>
+      
+        <div class="label">Daily Change</div>
+        <div class="value">{% if stock.daily_change > 0 %}<span style="color: #2e944b;"><span style="font-size: 12px;">▲</span> {% elif stock.daily_change < 0 %}<span style="color: #ea433b;"><span style="font-size: 12px;">▼</span> {% else %}<span>{% endif %}{{ stock.daily_change | my_abs }} ({{ stock.daily_change_percentage | per }})</span></div>
+      
+        <div class="label">High Price</div>
+        <div class="value">{{ stock.high | usd }}</div>
+      
+        <div class="label">Low Price</div>
+        <div class="value">{{ stock.low | usd }}</div>
+      
+        <div class="label">Open Price</div>
+        <div class="value">{{ stock.open | usd }}</div>
+      
+        <div class="label">Previous Close Price</div>
+        <div class="value">{{ stock.previous_close | usd }}</div>
+      </div>
+</main>
+{% endblock %}

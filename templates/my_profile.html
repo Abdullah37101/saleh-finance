@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My Profile
+{% endblock %}
+
+{% block main %}
+<main class="container text-center d-flex flex-column" style="padding-top: 3rem !important; padding: 0; flex-grow: 1;">
+    <h3 class="mb-4">{{ name }}</h3>
+    <form action="/change-picture" method="post" enctype="multipart/form-data">
+        <label for="profile_picture" style="cursor: pointer;">
+            <img src="profile-picture" alt="Profile Picture"
+                class="rounded-circle mb-3"
+                style="width: 150px; height: 150px; object-fit: cover;">
+        </label>
+        <input id="profile_picture" class="form-control mx-auto w-auto d-none" type="file"
+            name="profile_picture" accept="image/*" onchange="this.form.submit()">
+    </form>
+    <div class="d-grid gap-2 mx-auto mt-3" style="width: fit-content;">
+        <a href="/change-name" class="btn btn-outline-light btn-sm fs-6 px-4">Change Name</a>
+        <a href="/change-email" class="btn btn-outline-light btn-sm fs-6 px-4">Change Email</a>
+        <a href="/change-password" class="btn btn-outline-light btn-sm fs-6 px-4">Change Password</a>
+    </div>
+
+    <div class="mt-auto mb-3">
+        <a href="/delete-account" class="btn btn-outline-danger btn-sm fs-7 px-3">Delete Account</a>
+    </div>
+
+</main>
+{% endblock %}

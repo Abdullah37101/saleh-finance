@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Change Name
+{% endblock %}
+
+{% block main %}
+<main class="d-flex container text-center justify-content-center align-items-center" style="min-height: calc(100vh - 183.2px);">
+    <form action="/change-name" method="post">
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="name" placeholder="New Name" type="text">
+        </div>
+        <button class="btn btn-outline-light" type="submit">Change Name</button>
+    </form>
+</main>
+{% endblock %}

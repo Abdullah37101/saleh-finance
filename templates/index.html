@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfoilo
+{% endblock %}
+
+{% block main %}
+<main class="container text-center p-0 pt-3" style="flex: 1;">
+    <div class="info-grid justify-content-start">
+        <div class="label" style="font-size: large;">Total Assets</div>
+        <div class="value" style="font-size: large; margin-bottom: 1.5em;">{{ total_assets | usd }}</div>
+
+        <div class="label">Cash</div>
+        <div class="value">{{ cash | usd }}</div>
+        
+        <div class="label">Securities</div>
+        <div class="value">{{ securities | usd }}</div>
+    </div>
+    <br>
+    
+    <br>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="nowrap" scope="col">Asset</th>
+                <th class="nowrap" scope="col">Units Owned</th>
+                <th class="nowrap" scope="col">Cost Per Unit</th>
+                <th class="nowrap" scope="col">Current Price</th>
+                <th class="nowrap" scope="col">Market Value</th>
+                <th class="nowrap" scope="col">Daily Change</th>
+                <th class="nowrap" scope="col">Unrealized Return</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in stocks %}
+                <tr>
+                    <td class="nowrap"><a style="all: unset; cursor: pointer;" href="/quote?symbol={{ stock.symbol }}"><img src="{{ stock.logo }}" style="width: 30px; margin-right: 10px;">{{ stock.symbol }}</a></td>
+                    <td class="nowrap">{{ stock.total_shares }}</td>
+                    <td class="nowrap">{{ stock.cost_per_unit | usd }}</td>
+                    <td class="nowrap">{{ stock.current_price | usd }}</td>
+                    <td class="nowrap">{{ stock.market_value | usd }}</td>
+                    <td class="nowrap">{% if stock.daily_change > 0 %}<span style="color: #2e944b;"><span style="font-size: 12px;">▲</span> {% elif stock.daily_change < 0 %}<span style="color: #ea433b;"><span style="font-size: 12px;">▼</span> {% else %}<span>{% endif %}{{ stock.daily_change | my_abs }} ({{ stock.daily_change_percentage | per }})</span></td>
+                    <td class="nowrap"><span style="color:{% if stock.unrealized_return > 0 %} #2e944b {% elif stock.unrealized_return < 0 %} #ea433b {% endif %};">{{ stock.unrealized_return | usd }}</span></tr>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</main>
+{% endblock %}

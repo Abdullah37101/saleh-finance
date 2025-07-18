@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+<main class="d-flex container text-center justify-content-center align-items-center" style="min-height: calc(100vh - 183.2px);"> 
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="nowrap" scope="col">Asset</th>
+                <th class="nowrap" scope="col">Time</th>
+                <th class="nowrap" scope="col">Type</th>
+                <th class="nowrap" scope="col">Price Per Unit</th>
+                <th class="nowrap" scope="col">Units</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+                <tr>
+                    <td class="nowrap"><a style="all: unset; cursor: pointer;" href="/quote?symbol={{ transaction.symbol }}"><img src="{{ transaction.logo }}" style="width: 30px; margin-right: 10px;">{{ transaction.symbol }}</a></td>
+                    <td class="nowrap">{{ transaction.date }}</td>
+                    <td class="nowrap">{% if transaction.shares < 0 %}Sell{% else %}Buy{% endif %}</td>
+                    <td class="nowrap">{{ transaction.price | usd }}</td>
+                    <td class="nowrap">{{ transaction.shares | abs }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</main>
+{% endblock %}

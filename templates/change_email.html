@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Change Email
+{% endblock %}
+
+{% block main %}
+<main class="d-flex container text-center justify-content-center align-items-center" style="min-height: calc(100vh - 183.2px);">
+    <form action="/change-email" method="post">
+        <div class="mb-3">
+            <input autofocus class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="email" placeholder="New Email" type="email">
+        </div>
+        <button class="btn btn-outline-light" type="submit">Change Email</button>
+    </form>
+</main>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+<main class="d-flex container text-center justify-content-center align-items-center" style="min-height: calc(100vh - 183.2px);">
+    <form action="/login" method="post">
+        <div class="mb-3">
+            <input autofocus class="form-control mx-auto w-auto" name="email" placeholder="Email" type="email">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
+        </div>
+        <button class="btn btn-outline-light" type="submit" style="margin-bottom: 1rem !important;">Log In</button>
+        <a href="/forgot-password" class="website" style="color: #537fbe; display: block;">Forgot Password?</a>
+    </form>
+</main>
+{% endblock %}
