@@ -689,4 +689,4 @@ def reset_link(token: str):
 
 
 if __name__ == "__main__":
-    app.run(ssl_context=('cert.pem', 'privkey.pem'), host=("0.0.0.0"))
+    app.run(host=("0.0.0.0"))
