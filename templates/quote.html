@@ -6,11 +6,21 @@
 
 {% block main %}
 <main class="d-flex container text-center justify-content-center align-items-center" style="min-height: calc(100vh - 183.2px);">
-    <form action="/quote">
+    <form id="quoteForm">
         <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="symbol" placeholder="Symbol" type="text">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="symbol" id="symbol" placeholder="Symbol" type="text">
         </div>
         <button class="btn btn-outline-light" type="submit">Quote</button>
     </form>
 </main>
+
+<script>
+  document.getElementById('quoteForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const symbol = document.getElementById('symbol').value.trim();
+    if (symbol) {
+      window.location.href = `/quote/${encodeURIComponent(symbol)}`;
+    }
+  });
+</script>
 {% endblock %}

@@ -28,7 +28,7 @@ app = Flask(__name__)
 load_dotenv()
 register_heif_opener()
 
-def market_status(dummy="") -> bool:
+def market_status(dummy=""):
     try:
         return finnhub_client.market_status(exchange='US')["isOpen"]
     except requests.RequestException as e:
@@ -36,13 +36,13 @@ def market_status(dummy="") -> bool:
     except (KeyError, ValueError) as e:
         print(f"Data parsing error: {e}")
 
-def usd(value) -> str:
+def usd(value):
     return f"${value:,.2f}" if value >= 0 else f"-${-value:,.2f}"
 
-def per(value) -> str:
+def per(value):
     return f"{abs(value):,.2f}%"
 
-def my_abs(value) -> str:
+def my_abs(value):
     return f"{abs(value):,.2f}"
 
 app.jinja_env.filters["usd"] = usd
@@ -76,7 +76,7 @@ def get_db():
 
     return g.db
 
-def allowed_file(filename: str) -> bool:
+def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -129,7 +129,7 @@ def login_not_required(f):
     
     return decorated_function
 
-def lookup(symbol: str) -> dict:
+def lookup(symbol):
     try:
         data: dict = finnhub_client.company_profile2(symbol=symbol)
         data.update(finnhub_client.quote(symbol.upper()))
@@ -159,48 +159,48 @@ def lookup(symbol: str) -> dict:
     except (KeyError, ValueError) as e:
         print(f"Data parsing error: {e}")
 
-def generate_token(email: str, salt: str) -> str:
+def generate_token(email, salt):
     return s.dumps(email, salt=salt)
 
-def confirm_token(token: str, salt: str) -> str:
+def confirm_token(token, salt):
     try:
-        email: str = s.loads(token, salt=salt, max_age=3600)
+        email = s.loads(token, salt=salt, max_age=3600)
     except:
         return None
     return email
 
-def send_change_email(user_email: str) -> None:
+def send_change_email(user_email):
     db = get_db()
-    previous_token: str = generate_token(db.execute("SELECT email FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["email"], "previous-email-change-salt")
-    new_token: str = generate_token(user_email, "new-email-change-salt")
-    verification_link: str = f"https://127.0.0.1:5000/change-email/{previous_token}/{new_token}"
+    previous_token = generate_token(db.execute("SELECT email FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["email"], "previous-email-change-salt")
+    new_token = generate_token(user_email, "new-email-change-salt")
+    verification_link = f"https://127.0.0.1:5000/change-email/{previous_token}/{new_token}"
 
     with open("emails/change_email.html", "r", encoding="utf-8") as f:
-        html_content: str = f.read().replace("{{EMAIL_CONFIRMATION_LINK}}", verification_link).replace("{{NAME}}", db.execute("SELECT name FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["name"])
+        html_content = f.read().replace("{{EMAIL_CONFIRMATION_LINK}}", verification_link).replace("{{NAME}}", db.execute("SELECT name FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["name"])
 
     msg: Message = Message('$ALEH Finance - Change Your Email', sender=formataddr(("$ALEH Finance", app.config['MAIL_USERNAME'])), recipients=[user_email])
     msg.html = html_content
     mail.send(msg)
 
-def send_confirmation_email(user_email: str) -> None:
-    token: str = generate_token(user_email, "email-verify-salt")
-    verification_link: str = f"https://127.0.0.1:5000/verify-email/{token}"
+def send_confirmation_email(user_email):
+    token = generate_token(user_email, "email-verify-salt")
+    verification_link = f"https://127.0.0.1:5000/verify-email/{token}"
 
     with open("emails/verification_email.html", "r", encoding="utf-8") as f:
         db = get_db()
-        html_content: str = f.read().replace("{{VERIFICATION_LINK}}", verification_link).replace("{{NAME}}", db.execute("SELECT name FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["name"])
+        html_content = f.read().replace("{{VERIFICATION_LINK}}", verification_link).replace("{{NAME}}", db.execute("SELECT name FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["name"])
 
     msg: Message = Message('$ALEH Finance - Verify Your Email', sender=formataddr(("$ALEH Finance", app.config['MAIL_USERNAME'])), recipients=[user_email])
     msg.html = html_content
     mail.send(msg)
 
-def send_reset_email(user_email: str) -> None:
-    token: str = generate_token(user_email, "email-reset-salt")
-    reset_link: str = f"https://127.0.0.1:5000/reset-password/{token}"
+def send_reset_email(user_email):
+    token = generate_token(user_email, "email-reset-salt")
+    reset_link = f"https://127.0.0.1:5000/reset-password/{token}"
 
     with open("emails/reset_password_email.html", "r", encoding="utf-8") as f:
         db = get_db()
-        html_content: str = f.read().replace("{{RESET_LINK}}", reset_link).replace("{{NAME}}", db.execute("SELECT name FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["name"])
+        html_content = f.read().replace("{{RESET_LINK}}", reset_link).replace("{{NAME}}", db.execute("SELECT name FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["name"])
 
     msg: Message = Message('$ALEH Finance - Reset Your Password', sender=formataddr(("$ALEH Finance", app.config['MAIL_USERNAME'])), recipients=[user_email])
     msg.html = html_content
@@ -211,23 +211,23 @@ def page_not_found(e):
     return apology("the page you're looking for doesn't exist", 404)
 
 @app.teardown_appcontext
-def close_db(exception) -> None:
+def close_db(exception):
     db = g.pop('db', None)
     if db is not None:
         db.close()
 
 @app.route("/my-profile")
 @login_required
-def my_profile() -> str:
+def my_profile():
     db = get_db()
-    name: str = db.execute("SELECT name FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["name"]
+    name = db.execute("SELECT name FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["name"]
     return render_template("my_profile.html", name=name)
 
 @app.route("/profile-picture")
 @login_required
 def serve_profile_picture():
     db = get_db()
-    profile_picture: str = f"{app.config["UPLOAD_FOLDER"]}/{db.execute("SELECT profile_picture FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["profile_picture"]}"
+    profile_picture = f"{app.config["UPLOAD_FOLDER"]}/{db.execute("SELECT profile_picture FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["profile_picture"]}"
     mime_type, _ = mimetypes.guess_type(profile_picture)
     try:
         return send_file(profile_picture, mimetype=mime_type or "application/octet-stream")
@@ -252,17 +252,17 @@ def change_picture():
             if file.filename.rsplit('.', 1)[1].lower() == "webp":
                 raise Exception
             
-            filename: str = f"{session["user_id"]}.webp"
+            filename = f"{session["user_id"]}.webp"
             Image.open(file.stream).save(f"{app.config["UPLOAD_FOLDER"]}/{filename}", format="webp", save_all=True)
         except:
             if not allowed_file(file.filename):
                 raise Exception
             file.stream.seek(0)
-            filename: str = f"{session["user_id"]}.{file.filename.rsplit('.', 1)[1].lower()}"
+            filename = f"{session["user_id"]}.{file.filename.rsplit('.', 1)[1].lower()}"
             file.save(f"{app.config["UPLOAD_FOLDER"]}/{filename}")
 
         db = get_db()
-        previous: str = db.execute("SELECT profile_picture FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["profile_picture"]
+        previous = db.execute("SELECT profile_picture FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["profile_picture"]
         if previous != "default.jpg" and previous != filename:
             os.remove(f"{app.config["UPLOAD_FOLDER"]}/{previous}")
 
@@ -273,24 +273,24 @@ def change_picture():
 
 @app.route("/")
 @login_required
-def index() -> str:
+def index():
     db = get_db()
-    stocks: list = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = ? GROUP BY symbol", (session["user_id"],)).fetchall()
-    cash: float = db.execute("SELECT cash FROM users WHERE id = ?",(session["user_id"],)).fetchall()[0]["cash"]
-    total_assets: float = cash
-    securities: float = 0
+    stocks = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = ? GROUP BY symbol", (session["user_id"],)).fetchall()
+    cash = db.execute("SELECT cash FROM users WHERE id = ?",(session["user_id"],)).fetchall()[0]["cash"]
+    total_assets = cash
+    securities = 0
 
     for stock in stocks:
         if stock["total_shares"] <= 0:
             stocks.remove(stock)
             continue
 
-        buys: list = db.execute("SELECT shares, price FROM transactions WHERE symbol = ? AND user_id = ? AND shares > 0 ORDER BY date", (stock["symbol"], session["user_id"])).fetchall()
+        buys = db.execute("SELECT shares, price FROM transactions WHERE symbol = ? AND user_id = ? AND shares > 0 ORDER BY date", (stock["symbol"], session["user_id"])).fetchall()
         stock["total_cost"] = 0
         for buy in buys:
             stock["total_cost"] += buy["shares"] * buy["price"]
 
-        shares_to_sell: int = -db.execute("SELECT SUM(shares) AS shares_to_sell FROM transactions WHERE symbol = ? AND user_id = ? AND shares < 0 GROUP BY symbol", (stock["symbol"], session["user_id"])).fetchall()[0]["shares_to_sell"] if db.execute("SELECT * FROM transactions WHERE symbol = ? AND user_id = ? AND shares < 0", (stock["symbol"], session["user_id"])).fetchall() else 0
+        shares_to_sell = -db.execute("SELECT SUM(shares) AS shares_to_sell FROM transactions WHERE symbol = ? AND user_id = ? AND shares < 0 GROUP BY symbol", (stock["symbol"], session["user_id"])).fetchall()[0]["shares_to_sell"] if db.execute("SELECT * FROM transactions WHERE symbol = ? AND user_id = ? AND shares < 0", (stock["symbol"], session["user_id"])).fetchall() else 0
         while True:
             if buys[0]["shares"] <= shares_to_sell:
                 shares_to_sell -= buys[0]["shares"]
@@ -323,7 +323,7 @@ def buy():
     
 
     db = get_db()
-    symbol: str = request.form.get("symbol").upper()
+    symbol = request.form.get("symbol").upper()
     if not symbol:
         return apology("missing symbol", 400)
     
@@ -339,8 +339,8 @@ def buy():
     
     shares = int(shares)
     
-    current_price: float = lookup(symbol)["current_price"]
-    cash: float = db.execute("SELECT cash FROM users WHERE id = ?",(session["user_id"],)).fetchall()[0]["cash"] - shares * current_price
+    current_price = lookup(symbol)["current_price"]
+    cash = db.execute("SELECT cash FROM users WHERE id = ?",(session["user_id"],)).fetchall()[0]["cash"] - shares * current_price
     if cash < 0:
         return apology("can't afford", 400)
     
@@ -352,9 +352,9 @@ def buy():
 
 @app.route("/history")
 @login_required
-def history() -> str:
+def history():
     db = get_db()
-    transactions: list = db.execute("SELECT symbol, shares, price, date FROM transactions WHERE user_id = ? ORDER BY date DESC", (session["user_id"],)).fetchall()
+    transactions = db.execute("SELECT symbol, shares, price, date FROM transactions WHERE user_id = ? ORDER BY date DESC", (session["user_id"],)).fetchall()
     for transaction in transactions:
         transaction["logo"] = lookup(transaction["symbol"])["logo"]
         transaction["date"] = datetime.fromisoformat(transaction["date"]).strftime("%m/%d/%Y %I:%M %p")
@@ -405,7 +405,7 @@ def delete_account():
     if not check_password_hash(db.execute("SELECT hash FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["hash"], request.form.get("password")):
         return apology("incorrect password", 403)
     
-    profile_picture: str = db.execute("SELECT profile_picture FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["profile_picture"]
+    profile_picture = db.execute("SELECT profile_picture FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["profile_picture"]
     if profile_picture != "default.jpg":
         os.remove(f"{app.config["UPLOAD_FOLDER"]}/{profile_picture}")
     
@@ -435,7 +435,7 @@ def change_email():
         return render_template("change_email.html")
     
 
-    email: str = request.form.get("email")
+    email = request.form.get("email")
     if not email:
         return apology("missing new email", 400)
     
@@ -461,8 +461,8 @@ def change_email():
 
 @app.route("/change-email/<previous_token>/<new_token>")
 def change_email_token(previous_token, new_token):
-    previous_email: str = confirm_token(previous_token, "previous-email-change-salt")
-    new_email: str = confirm_token(new_token, "new-email-change-salt")
+    previous_email = confirm_token(previous_token, "previous-email-change-salt")
+    new_email = confirm_token(new_token, "new-email-change-salt")
 
     db = get_db()
     if not previous_email or not new_email or not db.execute("SELECT email FROM users WHERE email = ?", (previous_email,)).fetchall() or db.execute("SELECT email FROM users WHERE email = ?", (new_email,)).fetchall():
@@ -475,13 +475,15 @@ def change_email_token(previous_token, new_token):
 @app.route("/quote")
 @login_required
 def quote():
-    if not request.args.get("symbol"):
-        return render_template("quote.html")
-    
-    if lookup(request.args.get("symbol")) is None:
+    return render_template("quote.html")
+
+@app.route("/quote/<symbol>")
+@login_required
+def quote_symbol(symbol):
+    if lookup(symbol) is None:
         return apology("invalid symbol", 400)
     
-    return render_template("quoted.html", stock=lookup(request.args.get("symbol")))
+    return render_template("quoted.html", stock=lookup(symbol))
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -491,18 +493,18 @@ def register():
         return render_template("register.html")
     
 
-    name: str = request.form.get("name")
+    name = request.form.get("name")
     if not name:
         return apology("missing name", 400)
     
-    email: str = request.form.get("email")
+    email = request.form.get("email")
     if not email:
         return apology("missing email", 400)
     
     if not match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
         return apology("invalid email", 400)
     
-    password: str = request.form.get("password")
+    password = request.form.get("password")
     if not password:
         return apology("missing password", 400)
     
@@ -535,7 +537,7 @@ def sell():
     db = get_db()
 
     if request.method == "GET":
-        stocks: list = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = ? GROUP BY symbol", (session["user_id"],)).fetchall()
+        stocks = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = ? GROUP BY symbol", (session["user_id"],)).fetchall()
         for stock in stocks:
             if stock["total_shares"] <= 0:
                 stocks.remove(stock)
@@ -543,7 +545,7 @@ def sell():
         return render_template("sell.html", stocks=stocks)
     
 
-    symbol: str = request.form.get("symbol").upper()
+    symbol = request.form.get("symbol").upper()
     if not symbol:
         return apology("missing symbol", 400)
     
@@ -565,8 +567,8 @@ def sell():
     if db.execute("SELECT SUM(shares) AS total_shares FROM transactions WHERE user_id = ? AND symbol = ? GROUP BY symbol", (session["user_id"], symbol,)).fetchall()[0]["total_shares"] < shares:
         return apology("too many shares", 400)
     
-    current_price: float = lookup(symbol)["current_price"]
-    cash: float = db.execute("SELECT cash FROM users WHERE id = ?",(session["user_id"],)).fetchall()[0]["cash"] + shares * current_price
+    current_price = lookup(symbol)["current_price"]
+    cash = db.execute("SELECT cash FROM users WHERE id = ?",(session["user_id"],)).fetchall()[0]["cash"] + shares * current_price
     db.execute("UPDATE users SET cash = ? WHERE id = ?", (cash, session["user_id"]))
     db.execute("INSERT INTO transactions (user_id, symbol, shares, price, date) VALUES (?, ?, ?, ?, ?)",(session["user_id"], symbol, -shares, current_price, datetime.now(ZoneInfo("America/New_York"))))
     
@@ -581,11 +583,11 @@ def change_password():
         return render_template("change_password.html")
     
 
-    old_password: str = request.form.get("old_password")
+    old_password = request.form.get("old_password")
     if not old_password:
         return apology("missing old password", 400)
     
-    new_password: str = request.form.get("new_password")
+    new_password = request.form.get("new_password")
     if not new_password:
         return apology("missing new password", 400)
     
@@ -596,21 +598,21 @@ def change_password():
         return apology("short password", 400)
     
     db = get_db()
-    correct_old_password: str = db.execute("SELECT hash FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["hash"]
+    correct_old_password = db.execute("SELECT hash FROM users WHERE id = ?", (session["user_id"],)).fetchall()[0]["hash"]
     if not check_password_hash(correct_old_password, old_password):
         return apology("incorrect password", 403)
     
     if check_password_hash(correct_old_password, new_password):
         return apology("new password can't be the existing one", 400)
     
-    new_password: str = generate_password_hash(new_password)
+    new_password = generate_password_hash(new_password)
     db.execute("UPDATE users SET hash = ? WHERE id = ?", (new_password, session["user_id"],))
     flash("Password Changed!")
     return redirect("/")
 
 @app.route("/verify-email/<token>")
 def confirm_email(token):
-    email: str = confirm_token(token, "email-verify-salt")
+    email = confirm_token(token, "email-verify-salt")
     db = get_db()
 
     if not email or not db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchall():
@@ -632,7 +634,7 @@ def forgot_password():
         return render_template("forgot_password.html")
     
 
-    email: str = request.form.get("email")
+    email = request.form.get("email")
 
     if not email:
         return apology("missing email", 400)
@@ -649,12 +651,12 @@ def forgot_password():
     return redirect("/")
 
 @app.route("/reset-password/<token>", methods=["GET", "POST"])
-def reset_link(token: str):
+def reset_link(token):
     db = get_db()
 
 
     if request.method == "GET":
-        email: str = confirm_token(token, "email-reset-salt")
+        email = confirm_token(token, "email-reset-salt")
 
         if not email or not db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchall():
             session.pop("user_to_reset", default=None)
@@ -667,7 +669,7 @@ def reset_link(token: str):
         session.pop("user_to_reset", default=None)
         return apology("the reset link is invalid or has expired", 400)
     
-    new_password: str = request.form.get("new_password")
+    new_password = request.form.get("new_password")
     if not new_password:
         return apology("missing new password", 400)
     
@@ -677,11 +679,11 @@ def reset_link(token: str):
     if len(new_password) < 8:
         return apology("short password", 400)
     
-    old_password: str = db.execute("SELECT hash FROM users WHERE id = ?", (session["user_to_reset"],)).fetchall()[0]["hash"]
+    old_password = db.execute("SELECT hash FROM users WHERE id = ?", (session["user_to_reset"],)).fetchall()[0]["hash"]
     if check_password_hash(old_password, new_password):
         return apology("password can't be the existing one", 400)
     
-    new_password: str = generate_password_hash(new_password)
+    new_password = generate_password_hash(new_password)
     db.execute("UPDATE users SET hash = ? WHERE id = ?", (new_password, session["user_to_reset"]))
     session.pop("user_to_reset", default=None)
     flash("Password Reset!")
